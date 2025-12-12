@@ -32,7 +32,12 @@ def _default_compute_score(data_source, solution_str, ground_truth, extra_info=N
 
         # from . import math_verify
         # res = math_verify.compute_score(solution_str, ground_truth)
-    elif data_source == "math_dapo" or data_source.startswith("aime"):
+    elif data_source == "math_dapo":
+        from . import math_dapo
+
+        res = math_dapo.compute_score(solution_str, ground_truth)
+    elif data_source.startswith("aime") and data_source.lower() not in ["aime"]:
+        # Handle other "aime" variants (e.g., "aime24", "aime25") - use math_dapo for backward compatibility
         from . import math_dapo
 
         res = math_dapo.compute_score(solution_str, ground_truth)
@@ -63,7 +68,9 @@ def _default_compute_score(data_source, solution_str, ground_truth, extra_info=N
         from . import mme_world
         res = mme_world.compute_score(solution_str, ground_truth, code_executalbe, output_file=f'./samples/{data_source}.jsonl')
     
-    elif data_source in ["AIME"]:
+    elif data_source in ["AIME"] or data_source.lower() == "aime":
+        # Handle both "AIME" (uppercase) and "aime" (lowercase) data sources
+        # Use aime.compute_score which has format_score=0.0 by default and checks format
         from . import aime
         res = aime.compute_score(solution_str, ground_truth, code_executalbe, output_file=f'./samples/{data_source}.jsonl')
     
